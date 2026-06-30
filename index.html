@@ -1036,8 +1036,8 @@ const qk=(amts)=>`<div style="display:flex;gap:6px;margin-top:8px">${amts.map(a=
 if(t==='airtime')return`${nbtns}<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Phone Number</label><input class="inp" id="s-phone" type="tel" placeholder="080XXXXXXXX"/></div><div style="margin-bottom:20px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Amount</label><input class="inp" id="s-amt" type="number" placeholder="100"/>${qk([100,200,500,1000])}</div><button onclick="procSvc('airtime')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px">Buy Airtime</button>`;
 if(t==='data')return`${nbtns}<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Phone Number</label><input class="inp" id="s-phone" type="tel" placeholder="080XXXXXXXX" oninput="fetchDataPlans()"/></div><div style="margin-bottom:4px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Data Plan</label><select class="inp" id="s-amt" onchange="updateDataAmt(this)"><option value="">-- Select network first --</option></select></div><div id="data-loading" style="display:none;font-size:12px;color:var(--g500);padding:6px 2px;margin-bottom:8px">Fetching plans...</div><div id="data-info" style="display:none;background:var(--green-xl);border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--green-d)"></div><button onclick="procSvc('data')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px;margin-top:6px">Buy Data</button>`;
 if(t==='cable')return`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:13px">${['DSTV','GOtv','StarTimes','Showmax'].map(p=>`<button onclick="selCable(this)" style="padding:9px 1px;border:1.5px solid var(--g200);border-radius:9px;background:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">${p}</button>`).join('')}</div>`+`<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Smart Card Number</label><input class="inp" id="s-phone" placeholder="e.g. 1212121212"/></div><div style="margin-bottom:4px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Package</label><select class="inp" id="s-amt" onchange="updateDataAmt(this)"><option value="">&mdash; Select provider first &mdash;</option></select></div><div id="data-loading" style="display:none;font-size:12px;color:var(--g500);padding:6px 2px;margin-bottom:8px">Loading packages...</div><div id="data-info" style="display:none;background:var(--green-xl);border:1px solid #bbf7d0;border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--green-d)"></div><button onclick="procSvc('cable')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px;margin-top:6px">Pay Subscription</button>`;
-if(t==='electricity')return`<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Distribution Company</label><select class="inp" id="s-phone"><option value="EKEDC">EKEDC - Eko Electric</option><option value="IKEDC">IKEDC - Ikeja Electric</option><option value="AEDC">AEDC - Abuja Electric</option><option value="IBEDC">IBEDC - Ibadan Electric</option><option value="PHEDC">PHEDC - Port Harcourt Electric</option><option value="EEDC">EEDC - Enugu Electric</option><option value="KEDC">KEDC - Kano Electric</option><option value="JEDC">JEDC - Jos Electric</option></select></div>
-<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Meter Type</label><select class="inp" id="s-meter-type"><option value="prepaid">Prepaid</option><option value="postpaid">Postpaid</option></select></div><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Meter Number</label><input class="inp" id="s-meter" placeholder="Meter number"/></div><div style="margin-bottom:20px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Amount</label><input class="inp" id="s-amt" type="number" placeholder="1000"/>${qk([1000,2000,5000,10000])}</div><button onclick="procSvc('electricity')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px">Pay Electricity</button>`;
+if(t==='electricity')return`<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Distribution Company</label><select class="inp" id="s-phone" onchange="onElecDiscoChange()"><option value="01">Eko Electric - EKEDC (PHCN)</option><option value="02">Ikeja Electric - IKEDC (PHCN)</option><option value="03">Abuja Electric - AEDC</option><option value="04">Kano Electric - KEDC</option><option value="05">Portharcourt Electric - PHEDC</option><option value="06">Jos Electric - JEDC</option><option value="07">Ibadan Electric - IBEDC</option><option value="08">Kaduna Electric - KAEDC</option><option value="09">Enugu Electric - EEDC</option><option value="10">Benin Electric - BEDC</option><option value="11">Yola Electric - YEDC</option><option value="12">ABA Electric - APLE</option></select></div>
+<div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Meter Type</label><select class="inp" id="s-meter-type"><option value="01">Prepaid</option><option value="02">Postpaid</option></select></div><div style="margin-bottom:8px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Meter Number</label><div style="display:flex;gap:8px"><input class="inp" id="s-meter" placeholder="Enter meter number" style="flex:1" oninput="clearElecVerify()"/><button onclick="verifyElecMeter()" id="elec-verify-btn" style="padding:10px 14px;background:var(--green-d);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:Inter,sans-serif">Verify</button></div></div><div id="elec-verify-result" style="display:none;margin-bottom:12px;padding:10px 13px;border-radius:10px;background:#d1fae5;border:1px solid #86efac;font-size:13px;font-weight:600;color:#065f46"></div><div style="margin-bottom:20px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Amount (NGN) — Min: 1,000</label><input class="inp" id="s-amt" type="number" placeholder="e.g. 2000" min="1000" max="200000"/>${qk([1000,2000,5000,10000])}</div><button onclick="procSvc('electricity')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px">&#128161; Pay Electricity Bill</button>`;
 if(t==='loan')return`<div class="info-box"><p style="font-size:13px;color:var(--green-d);line-height:1.6">Quick loans reviewed within 24 hours. Amount credited to wallet on approval.</p></div><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Loan Amount</label><select class="inp" id="s-amt"><option value="5000">NGN 5,000</option><option value="10000">NGN 10,000</option><option value="20000">NGN 20,000</option><option value="50000">NGN 50,000</option><option value="100000">NGN 100,000</option><option value="200000">NGN 200,000</option><option value="500000">NGN 500,000</option></select></div><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Purpose</label><input class="inp" id="s-phone" placeholder="Brief purpose of loan"/></div><div style="margin-bottom:20px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Repayment Period</label><select class="inp" id="s-meter"><option>7 days</option><option>14 days</option><option>30 days</option></select></div><button onclick="procLoan()" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px">Apply for Loan</button>`;
 if(t==='result')return`<div class="info-box"><p style="font-size:13px;color:var(--green-d);line-height:1.6">Check WAEC or JAMB results. PIN delivered instantly.</p></div><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Exam Type</label><select class="inp" id="s-phone" onchange="onExamTypeChange()"><option value="WAEC">WAEC - West African Examinations Council</option><option value="JAMB">JAMB - Joint Admissions and Matriculation Board</option></select></div><div id="jamb-extra-fields" style="display:none"><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">JAMB Service Type</label><select class="inp" id="s-meter" onchange="fetchJAMBPlans()"><option value="UTME">UTME</option><option value="DE">Direct Entry (DE)</option><option value="RESULT">Result Checker</option></select></div><div style="margin-bottom:13px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">JAMB Profile ID <span style="font-size:10px;color:var(--g400)">(optional)</span></label><input class="inp" id="s-profileid" placeholder="Only needed for some JAMB services"/></div></div><div id="data-loading" style="display:none;text-align:center;padding:10px;color:var(--g400);font-size:12px"></div><div style="margin-bottom:20px"><label style="font-size:12px;font-weight:600;color:var(--g600);margin-bottom:6px;display:block">Result Checker PIN</label><select class="inp" id="s-amt"><option value="">Loading price...</option></select><div id="data-info" style="display:none;margin-top:8px;padding:10px;border-radius:8px;background:var(--green-xl);font-size:12px"></div></div><button onclick="procSvc('result')" class="btn-g" style="width:100%;padding:13px;border-radius:11px;font-size:15px">Buy Result Checker</button>`;
 }
@@ -1091,11 +1091,19 @@ extra={smartcard,serviceId:validProviders.includes(provider)?provider:'dstv',var
 }else if(type==='electricity'){
 const meter=document.getElementById('s-meter')?.value?.trim();
 if(!meter){toast('Enter your meter number');return;}
-const disco=document.getElementById('s-phone')?.value||'';
+if(meter.length<6){toast('Meter number seems too short. Please check.');return;}
+const disco=document.getElementById('s-phone')?.value||'01';
 if(!disco){toast('Select your electricity company');return;}
-const meterType=document.getElementById('s-meter-type')?.value||'prepaid';
-const custPhone=CU?.phoneNumber||UD?.phone||'08000000000';
-extra={meter,serviceId:disco,meterType,planName:disco+' NGN '+fmt(amt),custPhone};
+// Warn if meter not verified, but allow user to proceed
+if(!_elecVerified){
+  const goAhead=confirm('Meter not verified. Are you sure the meter number is correct?\n\nTap OK to proceed anyway, or Cancel to verify first.');
+  if(!goAhead)return;
+}
+const meterType=document.getElementById('s-meter-type')?.value||'01';
+const custPhone=UD?.phone||CU?.phoneNumber||'08011111111';
+const discoNames={'01':'Eko Electric (EKEDC)','02':'Ikeja Electric (IKEDC)','03':'Abuja Electric (AEDC)','04':'Kano Electric (KEDC)','05':'PH Electric (PHEDC)','06':'Jos Electric (JEDC)','07':'Ibadan Electric (IBEDC)','08':'Kaduna Electric (KAEDC)','09':'Enugu Electric (EEDC)','10':'Benin Electric (BEDC)','11':'Yola Electric (YEDC)','12':'ABA Electric (APLE)'};
+const discoLabel=discoNames[disco]||('DISCO '+disco);
+extra={meter,serviceId:disco,meterType,planName:discoLabel+' - NGN '+fmt(amt),custPhone,customerName:_elecCustomerName||''};
 }else if(type==='result'){
 const examType=document.getElementById('s-phone')?.value||'WAEC';
 const custPhone=CU?.phoneNumber||UD?.phone||'08000000000';
@@ -1285,6 +1293,7 @@ cable           : 'APICableTVV1.asp',
 cableVerify     : 'APIVerifyCableTVV1.asp',
 electricity     : 'APIElectricityV1.asp',
 electricityVerify: 'APIVerifyElectricityV1.asp',
+electricityType : 'APIElectricityTypeV2.asp',
 balance         : 'APIWalletBalance.asp',
 dataPlans       : 'APIDataBundlePlansV1.asp',
 cablePlans      : 'APICableTVPackagesV2.asp',
@@ -1375,7 +1384,7 @@ const st   = String(res.status||res.Status||res.statuscode||res.StatusCode||res.
 const sc   = String(res.statuscode||res.StatusCode||'').toLowerCase();
 const msg  = String(res.message||res.Message||res.description||'').toLowerCase();
 const NBS_SUCCESS_CODES   = ['100','200','00','0'];
-const NBS_SUCCESS_STATUSES= ['order_received','order_queued','successful','success','completed','delivered'];
+const NBS_SUCCESS_STATUSES= ['order_received','order_queued','order_completed','successful','success','completed','delivered','transaction successful'];
 const NBS_FAIL_STATUSES   = ['invalid','missing','error','failed','unauthorized','insufficient','unknown'];
 const codeOk   = NBS_SUCCESS_CODES.some(c => sc===c);
 const statusOk = NBS_SUCCESS_STATUSES.some(s => st.includes(s));
@@ -1907,14 +1916,29 @@ if(profileId) params.ProfileID = profileId;
 return apiFetch('jamb', params, { type:'result', amount, userId:CU?.uid||'' });
 }
 async function apiElectricity(meter, disco, meterType, amount, phone, reqId){
+// Nellobyte/ClubKonnect API: ElectricCompany=01-12, MeterType=01(prepaid)/02(postpaid)
+const mType = String(meterType);
+// Normalise legacy text values
+const mTypeCode = (mType==='prepaid'||mType==='1'||mType==='01') ? '01' : (mType==='postpaid'||mType==='2'||mType==='02') ? '02' : mType;
 return apiFetch('electricity',{
-ElectricCompany: disco,
-MeterType      : meterType,
-MeterNo        : meter,
+ElectricCompany: String(disco),
+MeterType      : mTypeCode,
+MeterNo        : String(meter).trim(),
 Amount         : amount,
-PhoneNo        : phone,
-RequestID      : reqId
+PhoneNo        : phone||UD?.phone||'08011111111',
+RequestID      : reqId,
+CallBackURL    : API_CFG.callbackUrl||''
 },{ type:'electricity', amount, userId:CU?.uid||'' });
+}
+
+async function apiVerifyElecMeter(meter, disco, meterType){
+const mType = String(meterType);
+const mTypeCode = (mType==='prepaid'||mType==='01') ? '01' : (mType==='postpaid'||mType==='02') ? '02' : mType;
+return apiFetch('electricityVerify',{
+ElectricCompany: String(disco),
+MeterNo        : String(meter).trim(),
+MeterType      : mTypeCode
+},{});
 }
 async function checkTxStatus(requestId){
 return apiFetch('status',{ RequestID:requestId },{ type:'status_check' });
@@ -6308,7 +6332,7 @@ const {type,amt,extra,ref,descs}=txData;
 const desc=(extra&&extra.planName)?extra.planName:(descs&&descs[type])||type;
 const now=new Date();
 const el=document.getElementById('receipt-content');if(!el)return;
-el.innerHTML=`<div id="receipt-printable" style="background:#fff;padding:24px;font-family:'Inter',sans-serif"><div style="display:flex;align-items:center;gap:9px;margin-bottom:16px"><div style="width:38px;height:38px;background:linear-gradient(135deg,#15803d,#22c55e);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#fff;flex-shrink:0">Z</div><div><div style="font-size:14px;font-weight:900;color:#15803d;letter-spacing:-.02em">ZMONIE</div><div style="font-size:10px;color:var(--g400)">Fintech &amp; Investment Platform</div></div></div><div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px dashed #e2e8f0"><div style="width:56px;height:56px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px">&#9989;</div><div style="font-size:18px;font-weight:900">Transaction Successful</div><div style="font-size:12px;color:var(--g400);margin-top:4px">${now.toLocaleDateString('en-NG',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div></div><div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;color:var(--g500)">Amount Paid</span><span style="font-size:20px;font-weight:900;color:var(--err)">NGN ${fmt(amt)}</span></div>${[['Service',desc],['Reference',ref||'&mdash;'],['Status','&#9989; Successful'],['Time',now.toLocaleTimeString('en-NG')],['Account',UD?.name||'&mdash;'],['Phone/ID',(extra?.phone||extra?.smartcard||extra?.meter||'')]].filter(r=>r[1]&&r[1]!=='&mdash;').map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:12px;color:var(--g500)">${k}</span><span style="font-size:12px;font-weight:600;max-width:60%;text-align:right">${v}</span></div>`).join('')}</div><div style="background:#f0fdf4;border-radius:12px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--green-d);font-weight:600">Powered by ZMONIE</div><div style="font-size:10px;color:var(--g400);margin-top:2px">zmonieservice@gmail.com &middot; 08068886569</div></div></div>`;
+el.innerHTML=`<div id="receipt-printable" style="background:#fff;padding:24px;font-family:'Inter',sans-serif"><div style="display:flex;align-items:center;gap:9px;margin-bottom:16px"><div style="width:38px;height:38px;background:linear-gradient(135deg,#15803d,#22c55e);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#fff;flex-shrink:0">Z</div><div><div style="font-size:14px;font-weight:900;color:#15803d;letter-spacing:-.02em">ZMONIE</div><div style="font-size:10px;color:var(--g400)">Fintech &amp; Investment Platform</div></div></div><div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px dashed #e2e8f0"><div style="width:56px;height:56px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px">&#9989;</div><div style="font-size:18px;font-weight:900">Transaction Successful</div><div style="font-size:12px;color:var(--g400);margin-top:4px">${now.toLocaleDateString('en-NG',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div></div><div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:12px;color:var(--g500)">Amount Paid</span><span style="font-size:20px;font-weight:900;color:var(--err)">NGN ${fmt(amt)}</span></div>${[['Service',desc],['Reference',ref||'&mdash;'],['Status','&#9989; Successful'],['Time',now.toLocaleTimeString('en-NG')],['Account',UD?.name||'&mdash;'],['Meter No',(extra?.meter||'')],['Customer',(extra?.customerName||_elecCustomerName||'')],['Phone',(extra?.phone||extra?.custPhone||'')],['Smartcard',(extra?.smartcard||'')],['Token',(txData?.vtpResult?.metertoken||txData?.vtpResult?.MeterToken||txData?.vtpResult?.token||txData?.vtpResult?.Token||txData?.vtpResult?.ordertoken||'')]].filter(r=>r[1]&&r[1]!=='&mdash;').map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:12px;color:var(--g500)">${k}</span><span style="font-size:12px;font-weight:600;max-width:60%;text-align:right">${v}</span></div>`).join('')}</div><div style="background:#f0fdf4;border-radius:12px;padding:12px;text-align:center"><div style="font-size:11px;color:var(--green-d);font-weight:600">Powered by ZMONIE</div><div style="font-size:10px;color:var(--g400);margin-top:2px">zmonieservice@gmail.com &middot; 08068886569</div></div></div>`;
 openM('m-receipt');
 pregenerateReceiptBlob();
 }
@@ -6490,32 +6514,38 @@ if(amt>=100){el.textContent='You will be credited: NGN '+fmt(amt)+' instantly af
 else if(amt>0){el.textContent='Minimum amount is NGN 100';}
 else{el.textContent='';}
 }
+function _resetPsBtn(){
+var btn=document.getElementById('ps-pay-btn');
+if(btn){btn.disabled=false;btn.innerHTML='<svg width="20" height="14" viewBox="0 0 20 14" fill="none"><rect width="20" height="14" rx="3" fill="#4f46e5" fill-opacity=".15"/><rect y="4" width="20" height="3" fill="#4f46e5" fill-opacity=".4"/></svg>Pay with Card / Bank Transfer';}
+}
 async function doPaystackFund(){
-const amtEl=document.getElementById('ps-fund-amt');
-const amount=parseFloat(amtEl&&amtEl.value)||0;
+var amtEl=document.getElementById('ps-fund-amt');
+var amount=parseFloat(amtEl&&amtEl.value)||0;
 if(!amount||amount<100){toast('Enter amount — minimum NGN 100');if(amtEl)amtEl.focus();return;}
-const btn=document.getElementById('ps-pay-btn');
+var btn=document.getElementById('ps-pay-btn');
 if(btn){btn.disabled=true;btn.textContent='Loading Paystack...';}
 try{await initPaystackPayment(amount);}
-finally{if(btn){btn.disabled=false;btn.innerHTML='<svg width="20" height="14" viewBox="0 0 20 14" fill="none"><rect width="20" height="14" rx="3" fill="#4f46e5" fill-opacity=".15"/><rect y="4" width="20" height="3" fill="#4f46e5" fill-opacity=".4"/></svg>Pay with Card / Bank Transfer';}}
+catch(e){toast('Error: '+e.message);}
+finally{_resetPsBtn();}
 }
 async function initPaystackPayment(amount){
 if(!amount||isNaN(amount)||amount<100){toast('Enter amount (minimum NGN 100)');return;}
-// Always fetch fresh config in case _psConfig is null or stale
+var cfgSnap,cfg;
 try{
-var cfgSnap=await db.collection('settings').doc('paystack').get();
-if(!cfgSnap.exists||!cfgSnap.data().enabled||!cfgSnap.data().publicKey){
-toast('Paystack card payment is not enabled. Please use bank transfer below.');return;
-}
-_psConfig=cfgSnap.data();
-}catch(e){toast('Could not load payment settings. Please use bank transfer.');return;}
+cfgSnap=await db.collection('settings').doc('paystack').get();
+cfg=cfgSnap.exists?cfgSnap.data():{};
+}catch(e){toast('Could not load payment config. Please use bank transfer below.');_resetPsBtn();return;}
+if(!cfg.enabled){toast('Card payment is currently disabled. Please use the bank transfer option below.');_resetPsBtn();return;}
+if(!cfg.publicKey){toast('Paystack key not set. Contact admin or use bank transfer below.');_resetPsBtn();return;}
+_psConfig=cfg;
 if(!window.PaystackPop){
 try{
 await new Promise(function(res,rej){
 var s=document.createElement('script');s.src='https://js.paystack.co/v1/inline.js';
-s.onload=res;s.onerror=function(){rej(new Error('Failed to load Paystack'));};document.head.appendChild(s);
+s.onload=res;s.onerror=function(){rej(new Error('Failed to load Paystack script. Check internet connection.'));};
+document.head.appendChild(s);
 });
-}catch(e){toast('Could not load Paystack. Check your internet connection.');return;}
+}catch(e){toast(e.message);_resetPsBtn();return;}
 }
 var ref='ZM_'+Date.now()+'_'+Math.random().toString(36).slice(2,8).toUpperCase();
 var handler=window.PaystackPop.setup({
@@ -6638,6 +6668,100 @@ closeM('m-fund');
 toast('&#9989; Payment proof submitted! Ref: '+ref+' — Admin will credit your wallet within 30 mins.');
 }catch(e){toast('Error: '+e.message);console.error('submitManualFundProof:',e);}
 finally{if(btn){btn.disabled=false;btn.textContent='&#128203; Submit Payment Proof';}}
+}
+
+// ================================================================
+// ELECTRICITY HELPERS
+// ================================================================
+var _elecVerified = false;
+var _elecCustomerName = '';
+
+function onElecDiscoChange(){
+  clearElecVerify();
+}
+
+function clearElecVerify(){
+  _elecVerified = false;
+  _elecCustomerName = '';
+  const res = document.getElementById('elec-verify-result');
+  if(res){ res.style.display='none'; res.textContent=''; }
+}
+
+async function verifyElecMeter(){
+  const meter = (document.getElementById('s-meter')?.value||'').trim();
+  const disco = document.getElementById('s-phone')?.value||'01';
+  const meterType = document.getElementById('s-meter-type')?.value||'01';
+  const res = document.getElementById('elec-verify-result');
+  const btn = document.getElementById('elec-verify-btn');
+  if(!meter){ toast('Enter your meter number first'); return; }
+  if(meter.length < 6){ toast('Meter number seems too short. Please check.'); return; }
+  if(btn){ btn.disabled=true; btn.textContent='Verifying...'; }
+  if(res){ res.style.display='block'; res.style.background='#fef3c7'; res.style.borderColor='#fcd34d'; res.style.color='#92400e'; res.textContent='⏳ Verifying meter number...'; }
+  try{
+    const data = await apiVerifyElecMeter(meter, disco, meterType);
+    const custName = data?.customer_name || data?.CustomerName || data?.customername || data?.name || '';
+    if(custName && custName.toUpperCase() !== 'INVALID_METERNO' && custName !== ''){
+      _elecVerified = true;
+      _elecCustomerName = custName;
+      if(res){ res.style.display='block'; res.style.background='#d1fae5'; res.style.borderColor='#86efac'; res.style.color='#065f46'; res.innerHTML='✅ Meter Verified &mdash; <strong>'+custName+'</strong>'; }
+    } else {
+      _elecVerified = false;
+      _elecCustomerName = '';
+      const errMsg = custName==='INVALID_METERNO' ? 'Invalid meter number. Please check and try again.' : (data?.message||data?.Message||'Could not verify meter. Check number and try again.');
+      if(res){ res.style.display='block'; res.style.background='#fef2f2'; res.style.borderColor='#fecaca'; res.style.color='#dc2626'; res.textContent='❌ '+errMsg; }
+    }
+  } catch(e){
+    if(res){ res.style.display='block'; res.style.background='#fef2f2'; res.style.borderColor='#fecaca'; res.style.color='#dc2626'; res.textContent='❌ Verification failed: '+e.message; }
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='Verify'; }
+  }
+}
+
+// ================================================================
+// ELECTRICITY HELPERS
+// ================================================================
+var _elecVerified = false;
+var _elecCustomerName = '';
+
+function onElecDiscoChange(){
+  clearElecVerify();
+}
+
+function clearElecVerify(){
+  _elecVerified = false;
+  _elecCustomerName = '';
+  const res = document.getElementById('elec-verify-result');
+  if(res){ res.style.display='none'; res.textContent=''; }
+}
+
+async function verifyElecMeter(){
+  const meter = (document.getElementById('s-meter')?.value||'').trim();
+  const disco = document.getElementById('s-phone')?.value||'01';
+  const meterType = document.getElementById('s-meter-type')?.value||'01';
+  const res = document.getElementById('elec-verify-result');
+  const btn = document.getElementById('elec-verify-btn');
+  if(!meter){ toast('Enter your meter number first'); return; }
+  if(meter.length < 6){ toast('Meter number seems too short. Please check.'); return; }
+  if(btn){ btn.disabled=true; btn.textContent='Verifying...'; }
+  if(res){ res.style.display='block'; res.style.background='#fef3c7'; res.style.borderColor='#fcd34d'; res.style.color='#92400e'; res.textContent='⏳ Verifying meter number...'; }
+  try{
+    const data = await apiVerifyElecMeter(meter, disco, meterType);
+    const custName = data?.customer_name || data?.CustomerName || data?.customername || data?.name || '';
+    if(custName && custName.toUpperCase() !== 'INVALID_METERNO' && custName !== ''){
+      _elecVerified = true;
+      _elecCustomerName = custName;
+      if(res){ res.style.display='block'; res.style.background='#d1fae5'; res.style.borderColor='#86efac'; res.style.color='#065f46'; res.innerHTML='✅ Meter Verified &mdash; <strong>'+custName+'</strong>'; }
+    } else {
+      _elecVerified = false;
+      _elecCustomerName = '';
+      const errMsg = custName==='INVALID_METERNO' ? 'Invalid meter number. Please check and try again.' : (data?.message||data?.Message||'Could not verify meter. Check number and try again.');
+      if(res){ res.style.display='block'; res.style.background='#fef2f2'; res.style.borderColor='#fecaca'; res.style.color='#dc2626'; res.textContent='❌ '+errMsg; }
+    }
+  } catch(e){
+    if(res){ res.style.display='block'; res.style.background='#fef2f2'; res.style.borderColor='#fecaca'; res.style.color='#dc2626'; res.textContent='❌ Verification failed: '+e.message; }
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='Verify'; }
+  }
 }
 
 const rwToggles={};
