@@ -2706,7 +2706,8 @@ function txHTML(tx){
   const icons={airtime:'📱',data:'📡',electricity:'⚡',cabletv:'📺',betting:'🎯',schoolpin:'🎓',fund:'💳',fund_approved:'✅',transfer:'💸',transfer_received:'💰',referral_bonus:'🎁',admin_credit:'💰',recharge_conversion:'💱'};
   const bg={airtime:'#E0F7FF',data:'#F5F3FF',electricity:'#FEF0E6',cabletv:'#FEF2F2',betting:'#ECFDF5',fund:'#E0FDF4',fund_approved:'#D1FAE5',transfer:'#FEFCE8',transfer_received:'#E0FDF4',schoolpin:'#E0FDF4',recharge_conversion:'#FFF7E0'};
   const s=csym(_s.userData?.country||'NG');
-  return`<div class="tx-item"><div class="tx-icon" style="background:${bg[tx.type]||'#F8FAFC'}">${icons[tx.type]||'💳'}</div><div class="tx-info"><div class="tx-name">${tx.description||tx.type}</div><div class="tx-meta">${tAgo(tx.createdAt)} · <span class="badge badge-${tx.status==='success'?'success':tx.status==='pending'?'pending':tx.status==='review'?'review':'failed'}">${tx.status}</span></div></div><div class="tx-amt"><div class="tx-amt-val ${ic?'cr':'dr'}">${ic?'+':'-'}${fmt(tx.amount,s)}</div></div></div>`;
+  const shareBtn=tx.id?`<button onclick="event.stopPropagation();shareTxReceipt('${tx.id}')" style="background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;color:var(--text3)" title="Share receipt">📤</button>`:'';
+  return`<div class="tx-item"><div class="tx-icon" style="background:${bg[tx.type]||'#F8FAFC'}">${icons[tx.type]||'💳'}</div><div class="tx-info"><div class="tx-name">${tx.description||tx.type}</div><div class="tx-meta">${tAgo(tx.createdAt)} · <span class="badge badge-${tx.status==='success'?'success':tx.status==='pending'?'pending':tx.status==='review'?'review':'failed'}">${tx.status}</span></div></div><div class="tx-amt"><div class="tx-amt-val ${ic?'cr':'dr'}">${ic?'+':'-'}${fmt(tx.amount,s)}</div>${shareBtn}</div></div>`;
 }
 async function loadWallet(){
   // Always fetch fresh user data from Firestore before rendering wallet
@@ -4435,37 +4436,179 @@ async function confirmTx(pin){
     _s.pendingData=null;
   }catch(e){showToast('error',e.message||'Transaction failed');goBack()}
 }
-window.shareReceipt=async()=>{
-  const wrap=document.getElementById('successReceiptWrap')||document.getElementById('successReceipt');
-  if(typeof html2canvas==='undefined'){
-    showToast('error','Screenshot not available');return;
-  }
-  try{
-    showToast('info','Preparing receipt image…');
-    const canvas=await html2canvas(wrap,{
-      backgroundColor:'#ffffff',scale:2,useCORS:true,
-      width:wrap.offsetWidth,height:wrap.offsetHeight,
-      windowWidth:wrap.offsetWidth,logging:false
-    });
+// ── Receipt sharing — canvas drawn directly (no html2canvas / CSS var deps) ──
+function buildReceiptCanvas(fields, title, status){
+  const W=600, PAD=32, HEADER=72, FOOTER=48;
+  const rowH=48, rows=fields.length;
+  const H=HEADER+PAD+rows*rowH+PAD+FOOTER;
+  const c=document.createElement('canvas');
+  c.width=W; c.height=H;
+  const ctx=c.getContext('2d');
+
+  // Background
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,W,H);
+
+  // Header bar
+  ctx.fillStyle='#1E1B4B';
+  ctx.beginPath();
+  ctx.roundRect(0,0,W,HEADER,14);
+  ctx.fill();
+
+  // Header icon box
+  ctx.fillStyle='#ffffff';
+  ctx.beginPath();
+  ctx.roundRect(PAD,16,40,40,8);
+  ctx.fill();
+  ctx.font='20px serif';
+  ctx.fillText('💳',PAD+10,44);
+
+  // Header text
+  ctx.fillStyle='#ffffff';
+  ctx.font='bold 16px sans-serif';
+  ctx.fillText('KOBOrush Receipt',PAD+52,46);
+
+  // Receipt rows
+  fields.forEach((f,i)=>{
+    const y=HEADER+PAD+(i*rowH);
+    // Subtle row stripe
+    if(i%2===1){ ctx.fillStyle='#F8FAFC'; ctx.fillRect(0,y,W,rowH); }
+    ctx.fillStyle='#9CA3AF';
+    ctx.font='12px sans-serif';
+    ctx.fillText(f.label,PAD,y+18);
+    ctx.fillStyle='#111827';
+    ctx.font='bold 14px sans-serif';
+    // Status gets a colour
+    if(f.label==='Status'){
+      ctx.fillStyle=status==='success'?'#16A34A':status==='processing'||status==='pending'?'#D97706':'#DC2626';
+    }
+    ctx.fillText(String(f.value),PAD+180,y+18);
+  });
+
+  // Divider
+  const divY=HEADER+PAD+rows*rowH+8;
+  ctx.strokeStyle='#E5E7EB';
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(PAD,divY);ctx.lineTo(W-PAD,divY);
+  ctx.stroke();
+
+  // Footer
+  ctx.fillStyle='#9CA3AF';
+  ctx.font='11px sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('Powered by KOBOrush · koborush.com',W/2,H-16);
+  ctx.textAlign='left';
+
+  return c;
+}
+
+async function doShareCanvas(canvas, filename){
+  return new Promise((resolve,reject)=>{
     canvas.toBlob(async(blob)=>{
-      if(!blob){showToast('error','Could not create image');return;}
-      const file=new File([blob],'KOBOrush-Receipt.png',{type:'image/png'});
-      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-        await navigator.share({title:'KOBOrush Receipt',files:[file]});
-      } else {
-        // Fallback: download the image
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');
-        a.href=url;a.download='KOBOrush-Receipt.png';
-        document.body.appendChild(a);a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('success','Receipt saved as image!');
+      if(!blob){reject(new Error('Could not create image'));return;}
+      const file=new File([blob],filename,{type:'image/png'});
+      try{
+        if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+          await navigator.share({title:'KOBOrush Receipt',text:'Transaction receipt from KOBOrush',files:[file]});
+          resolve('shared');
+        } else {
+          // Fallback: download
+          const url=URL.createObjectURL(blob);
+          const a=document.createElement('a');
+          a.href=url;a.download=filename;
+          document.body.appendChild(a);a.click();
+          document.body.removeChild(a);
+          setTimeout(()=>URL.revokeObjectURL(url),2000);
+          resolve('downloaded');
+        }
+      }catch(e){
+        if(e.name==='AbortError'){resolve('cancelled');}
+        else reject(e);
       }
     },'image/png');
+  });
+}
+
+window.shareReceipt=async()=>{
+  // Read fields from the live successReceipt div's rendered text content
+  const receiptDiv=document.getElementById('successReceipt');
+  const title=document.getElementById('successTitle')?.textContent||'Transaction Receipt';
+  if(!receiptDiv){ showToast('error','No receipt to share'); return; }
+
+  // Parse the receipt rows from DOM (label: value pairs)
+  const rows=receiptDiv.querySelectorAll('.sum-row,[class*="receipt-row"],[class*="row"]');
+  let fields=[];
+  if(rows.length){
+    rows.forEach(r=>{
+      const lbl=r.querySelector('.sum-lbl,[class*="lbl"],[class*="label"]')?.textContent?.trim();
+      const val=r.querySelector('.sum-val,[class*="val"],[class*="value"]')?.textContent?.trim();
+      if(lbl&&val) fields.push({label:lbl,value:val});
+    });
+  }
+  // Also grab status + reference if present
+  const statusEl=receiptDiv.querySelector('[class*="status"],[id*="status"]');
+  const refEl=receiptDiv.querySelector('[class*="ref"],[id*="ref"]');
+  const dateEl=receiptDiv.querySelector('[class*="date"],[id*="date"]');
+
+  // If no fields parsed, build from raw text lines
+  if(!fields.length){
+    const lines=receiptDiv.innerText.split('\n').filter(l=>l.trim());
+    for(let i=0;i<lines.length-1;i+=2){
+      fields.push({label:lines[i].trim(),value:lines[i+1].trim()});
+    }
+  }
+  if(!fields.length){ showToast('error','Receipt is empty'); return; }
+
+  const status=receiptDiv.innerText.toLowerCase().includes('success')?'success':
+               receiptDiv.innerText.toLowerCase().includes('process')?'processing':'pending';
+
+  showToast('info','Preparing receipt…');
+  try{
+    const canvas=buildReceiptCanvas(fields,title,status);
+    const result=await doShareCanvas(canvas,'KOBOrush-Receipt.png');
+    if(result==='shared') showToast('success','Receipt shared!');
+    else if(result==='downloaded') showToast('success','Receipt saved to your device!');
   }catch(e){
-    showToast('error','Could not capture receipt');
-    console.error(e);
+    showToast('error','Share failed: '+e.message);
+    console.error('[shareReceipt]',e);
+  }
+};
+
+// Share receipt for ANY past transaction from history/wallet screens
+window.shareTxReceipt=async(txId)=>{
+  if(!_s.user){showToast('error','Please log in');return;}
+  showToast('info','Loading receipt…');
+  try{
+    let tx=null;
+    // Find in already-loaded allTx cache first
+    if(_s.allTx&&_s.allTx.length){
+      tx=_s.allTx.find(t=>t.id===txId);
+    }
+    // If not cached, fetch directly from Firestore
+    if(!tx){
+      const snap=await getDoc(doc(db,'transactions',txId));
+      if(snap.exists()) tx={id:snap.id,...snap.data()};
+    }
+    if(!tx){showToast('error','Transaction not found');return;}
+
+    const date=tx.createdAt?.toDate?tx.createdAt.toDate():new Date();
+    const dateStr=date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+date.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const amt='₦'+Number(tx.amount||0).toLocaleString(undefined,{minimumFractionDigits:2});
+    const fields=[
+      {label:'Service',    value:tx.description||tx.type||'—'},
+      {label:'Amount',     value:amt},
+      {label:'Status',     value:(tx.status||'unknown').charAt(0).toUpperCase()+(tx.status||'').slice(1)},
+      {label:'Reference',  value:tx.requestId||tx.ref||tx.id||'—'},
+      {label:'Date',       value:dateStr}
+    ];
+    const canvas=buildReceiptCanvas(fields,'Transaction Receipt',tx.status||'success');
+    const result=await doShareCanvas(canvas,`KOBOrush-${tx.id||'Receipt'}.png`);
+    if(result==='shared') showToast('success','Receipt shared!');
+    else if(result==='downloaded') showToast('success','Receipt saved!');
+  }catch(e){
+    showToast('error','Could not share: '+e.message);
+    console.error('[shareTxReceipt]',e);
   }
 };
 
